@@ -1,4 +1,4 @@
-# hardware/oplus
+# hardware/oplus-guacamole
 
 ## Soong options
 

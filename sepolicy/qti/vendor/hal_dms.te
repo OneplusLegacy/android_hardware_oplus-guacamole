@@ -1,0 +1,28 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Dolby MultiStream (DMS) HAL 2.0 client/server attributes.
+#
+# Only two clients exist on the 7 Pro:
+#   hal_audio_default  - the effect factory loads libswdap/libhwdap, which talk
+#                        to the DMS service for parameter get/set
+#   mediacodec         - the Dolby decode path reads multistream parameters
+#
+# The 13T policy also lists platform_app for its com.dolby.daxservice app. The
+# 7 Pro has no such package, so it is not granted here.
+#
+
+hal_attribute_hwservice(hal_dms, hal_dms_hwservice)
+
+# HwBinder IPC between the effect host and the DMS service, in both directions
+# because the service reports enable and parameter changes back.
+binder_call(hal_dms_client, hal_dms_server)
+binder_call(hal_dms_server, hal_dms_client)
+
+hal_client_domain(hal_audio_default, hal_dms)
+hal_client_domain(mediacodec, hal_dms)
+
+add_hwservice(hal_dms_server, hal_dms_hwservice)
+allow hal_dms_client hal_dms_hwservice:hwservice_manager find;

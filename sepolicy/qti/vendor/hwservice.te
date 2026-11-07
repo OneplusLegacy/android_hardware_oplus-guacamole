@@ -9,6 +9,12 @@ type vendor_hal_commondcs_hwservice, hwservice_manager_type, protected_hwservice
 # Dolby Vision
 type hal_dvs_hwservice, hwservice_manager_type, protected_hwservice;
 
+# Dolby MultiStream. hal_dms.te publishes IDms into this type, and
+# hal_attribute_hwservice() only emits its exclusivity neverallow under
+# build_test_only, so the protected_hwservice attribute is what keeps every
+# other domain out of the service in a release build.
+type hal_dms_hwservice, hwservice_manager_type, protected_hwservice;
+
 # Face unlock
 type vendor_hal_face_hwservice, hwservice_manager_type, protected_hwservice;
 

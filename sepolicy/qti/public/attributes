@@ -16,3 +16,15 @@ vendor_hal_attribute(oplus_sensor)
 vendor_hal_attribute(oplus_touch)
 vendor_hal_attribute(oplus_urcc)
 vendor_hal_attribute(subsys)
+
+# Dolby MultiStream HAL.
+#
+# Declared by hand rather than through vendor_hal_attribute(), because that
+# macro prefixes the names with "vendor_hal_" and this interface's historical
+# attribute names are the unprefixed hal_dms/hal_dms_client/hal_dms_server.
+# sepolicy/qti/vendor/hal_dms.te uses exactly those three names, so the
+# attributes have to match; the QTI and LineageOS trees this device inherits
+# from use the same spelling.
+attribute hal_dms;
+attribute hal_dms_client;
+attribute hal_dms_server;

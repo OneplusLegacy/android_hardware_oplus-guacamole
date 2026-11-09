@@ -10,12 +10,9 @@
 # the same: one server domain, one hwservice type, and the audio effect host as
 # the only client.
 #
-# The 13T policy also granted binder_call to platform_app, because ColorOS ships
-# a com.dolby.daxservice app in that domain. The 7 Pro dump has no such APK -
-# the only Dolby components are the ODM HAL, libdlbdsservice and the DAP effects
-# - so that rule is dropped instead of copied. DolbyControl in this tree is a
-# privileged app, which is the priv_app domain, and it talks to the effect
-# through audioserver rather than to the DMS service directly.
+# DolbyControl runs in dolby_app and talks to audioserver through AudioEffect.
+# The 32-bit audio effect HAL and the codec process are the direct DMS clients;
+# the service itself remains 64-bit.
 #
 
 type hal_dms_default, domain;
@@ -24,26 +21,21 @@ hal_server_domain(hal_dms_default, hal_dms)
 type hal_dms_default_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(hal_dms_default)
 
-# Persistent DAP parameter cache. Created by the init fragment in
-# vendor/oneplus/dolby-guacamole/configs/init/dolby.rc.
+# Persistent DAP parameter cache.
 #
-# The directory gets its own type rather than the generic vendor_data_file that
-# stock OxygenOS happens to inherit from /data/vendor(.+). vendor_data_file is
-# shared by every vendor component on the device, so labelling the Dolby cache
-# with it would let any vendor domain that holds a generic grant read and
-# rewrite dax-extra.xml and the parameter database. A dedicated type keeps the
-# cache reachable only from this domain, which is what renoir and nabu do for
-# the same two files.
-type dolby_dms_data_file, data_file_type, file_type;
-
-allow hal_dms_default dolby_dms_data_file:dir create_dir_perms;
-allow hal_dms_default dolby_dms_data_file:file create_file_perms;
-
-# The cache is data, never code.
-neverallow hal_dms_default dolby_dms_data_file:file { execute execute_no_trans };
+# libdlbdsservice_v3_6 hardcodes /data/vendor/dolby for dax-extra.xml and
+# dax_sqlite3.db, and the init fragment in
+# vendor/oneplus/dolby-guacamole/configs/init/dolby.rc creates the directory.
+# Stock OxygenOS labels that path vendor_data_file through the default
+# "/data/vendor(/.*)?" rule and grants exactly the permissions below, so this
+# port does the same instead of defining a Dolby-specific type.
+#
+allow hal_dms_default vendor_data_file:dir {
+    ioctl read write getattr lock open watch watch_reads add_name remove_name search };
+allow hal_dms_default vendor_data_file:file {
+    ioctl read write create getattr setattr lock append map unlink rename open
+    watch watch_reads };
 
 # The effect host and the mediaserver decode path are the clients that call in.
 binder_call(hal_dms_default, hal_audio_default)
 binder_call(hal_dms_default, mediacodec)
-
-set_prop(hal_dms_default, vendor_audio_prop)

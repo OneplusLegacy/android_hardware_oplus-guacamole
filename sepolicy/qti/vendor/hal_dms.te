@@ -26,3 +26,8 @@ hal_client_domain(mediacodec, hal_dms)
 
 add_hwservice(hal_dms_server, hal_dms_hwservice)
 allow hal_dms_client hal_dms_hwservice:hwservice_manager find;
+
+# These blobs read the vendor.dolby/persist.vendor.dolby properties; they do
+# not set audio properties. Keep this separate from vendor_audio_prop.
+get_prop(hal_dms_client, vendor_dolby_dms_prop)
+get_prop(hal_dms_server, vendor_dolby_dms_prop)

@@ -34,3 +34,6 @@ allow hal_oneplus_face hal_oneplus_face_tmpfs:file open;
 r_dir_file(hal_oneplus_face, vendor_sysfs_kgsl)
 
 get_prop(hal_oneplus_face, camera_config_prop)
+
+# The AIDL face implementation selects its TEE backend with this property.
+get_prop(hal_oneplus_face, vendor_face_prop)

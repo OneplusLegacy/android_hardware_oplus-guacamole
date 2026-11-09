@@ -21,6 +21,7 @@ ro.vendor.oplus.esim.support    u:object_r:vendor_oplus_esim_prop:s0
 
 # Face unlock
 persist.vendor.face.          u:object_r:vendor_face_prop:s0
+persist.vendor.faceunlock.tee  u:object_r:vendor_face_prop:s0 exact bool
 persist.vendor.oplus.face.    u:object_r:vendor_face_prop:s0
 vendor.oplus.face.            u:object_r:vendor_face_prop:s0
 
@@ -76,3 +77,9 @@ vendor.oplus.urcc.started    u:object_r:vendor_oplus_urcc_prop:s0
 
 # Widevine
 vendor.wvm.disable_l1    u:object_r:vendor_wvmkiller_prop:s0
+
+# Names recovered from the stock DAP clients and parameter storage library.
+persist.vendor.dolby.loglevel       u:object_r:vendor_dolby_dms_prop:s0 exact
+vendor.dolby.dap.param.tee          u:object_r:vendor_dolby_dms_prop:s0 exact
+vendor.dolby.debug.dap_pcm_dump     u:object_r:vendor_dolby_dms_prop:s0 exact
+vendor.dolby.mi.metadata.log        u:object_r:vendor_dolby_dms_prop:s0 exact

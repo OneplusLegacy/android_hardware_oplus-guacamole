@@ -237,7 +237,7 @@
 /dev/wls_dev                          u:object_r:wlchg_device:s0
 /(odm|vendor/odm)/bin/hw/vendor\.dolby_v3_6\.hardware\.dms360@2\.0-service   u:object_r:hal_dms_default_exec:s0
 
-# Dolby DAP parameter cache. libdlbdsservice_v3_6 hardcodes /data/vendor/dolby
-# for dax-extra.xml and dax_sqlite3.db; the directory is created by the init
-# fragment in vendor/oneplus/dolby-guacamole/configs/init/dolby.rc.
-/data/vendor/dolby(/.*)?              u:object_r:dolby_dms_data_file:s0
+# The Dolby DAP parameter cache at /data/vendor/dolby keeps the default label
+# from the "/data/vendor(/.*)?" rule in plat file_contexts, which is exactly
+# what stock OxygenOS does. hal_dms_default.te grants the access on
+# vendor_data_file.

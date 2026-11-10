@@ -15,6 +15,13 @@ public class OplusFrameworkFactory implements IOplusCommonFactory {
         return sInstance;
     }
 
+    /** Return the SDK's supplied default even when its vendor index is absent. */
+    @Override
+    public <T extends IOplusCommonFeature> T getFeature(T def, Object... vars) {
+        if (def == null) throw new IllegalArgumentException("def can not be null");
+        return def;
+    }
+
     @Override
     public boolean isValid(int index) {
         boolean validOplus =

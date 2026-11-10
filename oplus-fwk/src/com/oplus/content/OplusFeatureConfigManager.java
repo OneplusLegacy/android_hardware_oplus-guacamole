@@ -5,8 +5,6 @@
 
 package com.oplus.content;
 
-import android.text.TextUtils;
-
 import java.util.List;
 
 public class OplusFeatureConfigManager {
@@ -21,6 +19,11 @@ public class OplusFeatureConfigManager {
 
     public boolean hasFeature(String featureName) {
         return false;
+    }
+
+    /** No OEM feature service is installed; use the same local capability result. */
+    public boolean hasFeatureIPC(String featureName) {
+        return hasFeature(featureName);
     }
 
     public interface OnFeatureObserver {

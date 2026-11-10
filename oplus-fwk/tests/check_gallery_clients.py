@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 p=argparse.ArgumentParser();p.add_argument('--rom-root',required=True,type=Path);a=p.parse_args()
 source=Path(__file__).resolve().parents[1]/'src'
-files=['com/oplus/util/OplusChangeTextUtil.java','android/common/IOplusCommonFeature.java','android/common/IOplusCommonFactory.java',
+files=['android/app/OplusWhiteListManager.java','com/oplus/util/OplusChangeTextUtil.java','android/common/IOplusCommonFeature.java','android/common/IOplusCommonFactory.java',
        'android/common/OplusFeatureList.java','android/common/OplusFrameworkFactory.java',
        'com/oplus/app/OPlusAccessControlManager.java','com/oplus/content/OplusFeatureConfigManager.java',
        'android/content/res/OplusBaseConfiguration.java','oplus/content/res/OplusExtraConfiguration.java']
@@ -18,6 +18,15 @@ import com.oplus.content.OplusFeatureConfigManager;
 import android.content.res.OplusBaseConfiguration;
 import oplus.content.res.OplusExtraConfiguration;
 public class ContractCheck {public static void main(String[] args)throws Exception {
+ var lists=new android.app.OplusWhiteListManager(null);
+ for(String method:new String[]{"getGlobalWhiteList","getGlobalProcessWhiteList"})
+  if(lists.getClass().getMethod(method).getReturnType()!=java.util.ArrayList.class)throw new AssertionError("Stock DEX return descriptor: "+method);
+ if(lists.getClass().getMethod("getStageProtectListFromPkg",String.class,int.class).getReturnType()!=java.util.ArrayList.class)throw new AssertionError("Stage-protect return descriptor");
+ lists.addStageProtectInfo("com.oneplus.gallery",5000L);
+ if(!lists.getStageProtectListFromPkg("com.oneplus.gallery",0).isEmpty())throw new AssertionError("No absent OEM backend protection may be invented");
+ var first=lists.getGlobalWhiteList();first.add("caller-mutated");
+ if(!lists.getGlobalWhiteList().isEmpty()||!lists.getGlobalProcessWhiteList().isEmpty())throw new AssertionError("Caller cannot mutate shared backend state");
+ lists.removeStageProtectInfo("com.oneplus.gallery");
  var feature=new android.common.IOplusCommonFeature(){};
  if(android.common.OplusFrameworkFactory.getInstance().getFeature(feature)!=feature)throw new AssertionError("Missing vendor feature must preserve the supplied SDK default");
  try{android.common.OplusFrameworkFactory.getInstance().getFeature(null);throw new AssertionError("null feature accepted");}catch(IllegalArgumentException expected){}
